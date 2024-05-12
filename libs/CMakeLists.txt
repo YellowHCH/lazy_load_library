@@ -1,0 +1,29 @@
+CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
+PROJECT(lazylib)
+
+MESSAGE(STATUS "Gen dynamic and static lib")
+
+SET(LIBSRC 
+  lazy_utils.cc
+)
+
+ADD_LIBRARY(lazy_lib_dyn SHARED ${LIBSRC})
+ADD_LIBRARY(lazy_lib_static STATIC ${LIBSRC})
+
+SET_TARGET_PROPERTIES(lazy_lib_dyn PROPERTIES OUTPUT_NAME lazy_lib)
+SET_TARGET_PROPERTIES(lazy_lib_static PROPERTIES OUTPUT_NAME lazy_lib)
+
+SET(CMAKE_INSTALL_PREFIX ${CMAKE_CURRENT_SOURCE_DIR})
+
+INSTALL(TARGETS lazy_lib_dyn lazy_lib_static
+  LIBRARY DESTINATION lib # install dynamic libs
+  LIBRARY DESTINATION lib # install static libs
+)
+
+INSTALL(FILES lazy_utils.h DESTINATION include/lazy)
+
+ADD_EXECUTABLE(test_lazy_lib test_lazy_lib.cc)
+SET(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin)
+INCLUDE_DIRECTORIES(BEFORE ${PROJECT_SOURCE_DIR}/)
+LINK_DIRECTORIES(${PROJECT_BINARY_DIR}/)
+TARGET_LINK_LIBRARIES(test_lazy_lib lazy_lib_dyn)
